@@ -1,96 +1,101 @@
 package memex
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"time"
+	"io/ioutil"
+	"net/http"
+
+	"github.com/Sirupsen/logrus"
 )
 
-// SpaceType represents semantic type of space
-type SpaceType string
-
-const (
-	// Origin represents starting point space for user
-	Origin SpaceType = "com.memex.origin"
-	// Text space represents textual data
-	Text SpaceType = "com.memex.media.text"
-	// WebPage space represents web link URL
-	WebPage SpaceType = "com.memex.media.webpage"
-	// Image space represents image/diagram space
-	Image SpaceType = "com.memex.media.image"
-	// Collection is set/list of links to other spaces
-	Collection SpaceType = "com.memex.media.collection"
-)
-
-// Space represents folder/text/everything
-type Space struct {
-	MUID            *string     `json:"muid,omitempty"`
-	CreatedAt       *time.Time  `json:"created_at,omitempty"`
-	UpdatedAt       *time.Time  `json:"updated_at,omitempty"`
-	VisitedAt       *time.Time  `json:"visited_at,omitempty"`
-	State           EntityState `json:"state"`
-	OwnerID         *int64      `json:"owner_id,omitempty"`
-	Caption         *string     `json:"tag_label,omitempty"`
-	Color           *string     `json:"tag_color,omitempty"`
-	TypeIdentifier  SpaceType   `json:"type_identifier"`
-	Representations *[]Media    `json:"representations,omitempty"`
+// Spaces object
+type Spaces struct {
+	verbose    bool
+	appToken   string
+	userToken  string
+	serverURL  string
+	httpClient *http.Client
 }
 
-type spaceResponse struct {
-	Space Space `json:"space"`
+// NewSpaces creates new spaces object
+func NewSpaces() (*Spaces, error) {
+	spaces := &Spaces{
+		verbose:    true,
+		appToken:   "",
+		userToken:  "",
+		serverURL:  serverURL(Production),
+		httpClient: &http.Client{},
+	}
+	return spaces, nil
 }
 
-type spacesRequest struct {
-	Spaces []*Space `json:"spaces"`
+// SetAppToken sets app/client token
+func (spaces *Spaces) SetAppToken(token string) {
+	spaces.appToken = token
 }
 
-// RepresentationWithType returns representation with specified media type
-func (space *Space) RepresentationWithType(mediaType MediaType) *Media {
-	if space.Representations == nil {
-		return nil
-	}
-	for _, media := range *space.Representations {
-		if media.MediaType == mediaType {
-			return &media
-		}
-	}
-	return nil
+// SetUserToken sets user token
+func (spaces *Spaces) SetUserToken(token string) {
+	spaces.userToken = token
 }
 
-// GetSpace returns space with representations
-func (spaces *Spaces) GetSpace(muid string) (*Space, error) {
-	path := fmt.Sprintf("/spaces/%v", muid)
-	var responseObject spaceResponse
-	_, requestError := spaces.perform("GET", path, nil, &responseObject)
-	if requestError != nil {
-		return nil, requestError
-	}
-	return &responseObject.Space, nil
+// SetEnvironment sets environment of service Production/Stage/Sandbox/Local
+func (spaces *Spaces) SetEnvironment(environment Environment) {
+	spaces.serverURL = serverURL(environment)
 }
 
-// UpdateSpaces updates spaces
-func (spaces *Spaces) UpdateSpaces(array []*Space, ownerID int64) error {
-	message := &spacesRequest{
-		Spaces: array,
+func serverURL(environment Environment) string {
+	switch environment {
+	case Production:
+		return "https://memexapp.herokuapp.com/api/v1"
+	case Stage:
+		return "https://memexapp-staging.herokuapp.com/api/v1"
+	case Local:
+		return "http://localhost:5000/api/v1"
+	case Sandbox:
+		return "https://memexapp-sandbox.herokuapp.com/api/v1"
 	}
-	body, serializationError := json.Marshal(message)
-	if serializationError != nil {
-		return serializationError
-	}
-	path := fmt.Sprintf("/spaces/multiple")
-	var responseObject spaceResponse
-	_, requestError := spaces.perform("POST", path, body, &responseObject)
-	if requestError != nil {
-		return requestError
-	}
-	return nil
+	return ""
 }
 
-// UpdateSpace updates single space
-func (spaces *Spaces) UpdateSpace(space *Space) error {
-	array := []*Space{space}
-	if space.OwnerID == nil {
-		return fmt.Errorf("Missing ownerID")
+func (spaces *Spaces) perform(method string, path string, body []byte, responseObject interface{}) (*http.Response, error) {
+	if spaces.appToken == "" {
+		return nil, fmt.Errorf("Missing appToken, call SetAppToken(\"<Your app token>\")")
 	}
-	return spaces.UpdateSpaces(array, *space.OwnerID)
+	endpointURL := fmt.Sprintf("%v%v", spaces.serverURL, path)
+	bodyReader := bytes.NewBuffer(body)
+	if spaces.verbose {
+		logrus.Print("==== REQUEST ====")
+		logrus.Print(endpointURL)
+		logrus.Print(string(body))
+	}
+	request, requestCreationError := http.NewRequest(method, endpointURL, bodyReader)
+	if requestCreationError != nil {
+		return nil, fmt.Errorf("Unable to create request: %v", requestCreationError.Error())
+	}
+	request.Header.Add("Content-Type", "application/json")
+	request.Header.Add("X-App-Token", spaces.appToken)
+	if spaces.userToken != "" {
+		request.Header.Add("X-User-Token", spaces.userToken)
+	}
+	response, fetchError := spaces.httpClient.Do(request)
+	if fetchError != nil {
+		return nil, fmt.Errorf("Unable to fetch url: %v", fetchError.Error())
+	}
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return nil, fmt.Errorf("Invalid response code: %v", response.StatusCode)
+	}
+	body, readError := ioutil.ReadAll(response.Body)
+	if readError != nil {
+		return nil, fmt.Errorf("Cant read data")
+	}
+	parseError := json.Unmarshal(body, responseObject)
+	if parseError != nil {
+		s := string(body)
+		fmt.Printf(s)
+		return nil, fmt.Errorf("Cant parse response")
+	}
+	return response, nil
 }
