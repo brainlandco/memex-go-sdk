@@ -49,13 +49,11 @@ func (spaces *Spaces) SetEnvironment(environment Environment) {
 func serverURL(environment Environment) string {
 	switch environment {
 	case Production:
-		return "https://memexapp.herokuapp.com/api/v1"
+		return "https://mmx-spaces-api-prod.herokuapp.com/api/v1"
 	case Stage:
-		return "https://memexapp-staging.herokuapp.com/api/v1"
+		return "https://mmx-spaces-api-stage.herokuapp.com/api/v1"
 	case Local:
 		return "http://localhost:5000/api/v1"
-	case Sandbox:
-		return "https://memexapp-sandbox.herokuapp.com/api/v1"
 	}
 	return ""
 }

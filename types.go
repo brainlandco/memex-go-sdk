@@ -20,6 +20,4 @@ const (
 	Stage Environment = 1
 	// Local environment server
 	Local Environment = 2
-	// Sandbox environment server
-	Sandbox Environment = 3
 )
