@@ -64,11 +64,6 @@ func (spaces *Spaces) perform(method string, path string, body []byte, responseO
 	}
 	endpointURL := fmt.Sprintf("%v%v", spaces.serverURL, path)
 	bodyReader := bytes.NewBuffer(body)
-	if spaces.verbose {
-		logrus.Print("==== REQUEST ====")
-		logrus.Print(endpointURL)
-		logrus.Print(string(body))
-	}
 	request, requestCreationError := http.NewRequest(method, endpointURL, bodyReader)
 	if requestCreationError != nil {
 		return nil, fmt.Errorf("Unable to create request: %v", requestCreationError.Error())
@@ -77,6 +72,12 @@ func (spaces *Spaces) perform(method string, path string, body []byte, responseO
 	request.Header.Add("X-App-Token", spaces.appToken)
 	if spaces.userToken != "" {
 		request.Header.Add("X-User-Token", spaces.userToken)
+	}
+	if spaces.verbose {
+		logrus.Printf("REQUEST To: %v, Body: %v", endpointURL, string(body))
+		for key, value := range request.Header {
+			logrus.Println("HEADER: key:", key, "value:", value)
+		}
 	}
 	response, fetchError := spaces.httpClient.Do(request)
 	if fetchError != nil {
@@ -92,7 +93,9 @@ func (spaces *Spaces) perform(method string, path string, body []byte, responseO
 	parseError := json.Unmarshal(body, responseObject)
 	if parseError != nil {
 		s := string(body)
-		fmt.Printf(s)
+		if spaces.verbose {
+			fmt.Printf("RESPONSE: %v", s)
+		}
 		return nil, fmt.Errorf("Cant parse response")
 	}
 	return response, nil
