@@ -44,6 +44,10 @@ type spacesRequest struct {
 	Spaces []*Space `json:"spaces"`
 }
 
+type markAsUnreadRequest struct {
+	MUIDs []*string `json:"space_MUIDs"`
+}
+
 // RepresentationWithType returns representation with specified media type
 func (space *Space) RepresentationWithType(mediaType MediaType) *Media {
 	if space.Representations == nil {
@@ -93,4 +97,22 @@ func (spaces *Spaces) UpdateSpace(space *Space) error {
 		return fmt.Errorf("Missing ownerID")
 	}
 	return spaces.UpdateSpaces(array, *space.OwnerID)
+}
+
+// MarkSpacesAsUnread marks spaces as unread
+func (spaces *Spaces) MarkSpacesAsUnread(muids []*string) error {
+	message := &markAsUnreadRequest{
+		MUIDs: muids,
+	}
+	body, serializationError := json.Marshal(message)
+	if serializationError != nil {
+		return serializationError
+	}
+	path := fmt.Sprintf("/spaces/mark-as-unread")
+	var responseObject spaceResponse
+	_, requestError := spaces.perform("POST", path, body, &responseObject)
+	if requestError != nil {
+		return requestError
+	}
+	return nil
 }
