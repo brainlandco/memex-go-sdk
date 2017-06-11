@@ -8,15 +8,25 @@ import (
 
 // Link represents link between spaces
 type Link struct {
-	MUID            *string     `json:"muid,omitempty"`
-	CreatedAt       *time.Time  `json:"created_at,omitempty"`
-	UpdatedAt       *time.Time  `json:"updated_at,omitempty"`
-	VisitedAt       *time.Time  `json:"visited_at,omitempty"`
-	State           EntityState `json:"state"`
-	Order           *int64      `json:"order,omitempty"`
-	OriginSpaceMUID *string     `json:"origin_space_muid,omitempty"`
-	TargetSpaceMUID *string     `json:"target_space_muid,omitempty"`
-	OwnerID         *int64      `json:"owner_id,omitempty"`
+
+	// Unique identifier
+	MUID *string `json:"muid,omitempty"`
+	// Creation timestamp
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	// Timestamp of last update
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	// Timestamp of last visit
+	VisitedAt *time.Time `json:"visited_at,omitempty"`
+	// Visibility state
+	State EntityState `json:"state"`
+	// Owner user ID
+	OwnerID *int64 `json:"owner_id,omitempty"`
+	// Index that is used for sorting of links in space
+	Order *int64 `json:"order,omitempty"`
+	// Origin space MUID
+	OriginSpaceMUID *string `json:"origin_space_muid,omitempty"`
+	// Target space MUID
+	TargetSpaceMUID *string `json:"target_space_muid,omitempty"`
 }
 
 type linksResponse struct {

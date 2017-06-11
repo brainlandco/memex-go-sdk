@@ -34,18 +34,30 @@ const (
 
 // Media represents folder/text/everything
 type Media struct {
-	MUID                 *string        `json:"muid,omitempty"`
-	CreatedAt            *time.Time     `json:"created_at,omitempty"`
-	UpdatedAt            *time.Time     `json:"updated_at,omitempty"`
-	State                EntityState    `json:"state"`
-	OwnerID              *int64         `json:"owner_id,omitempty"`
-	Metadata             *string        `json:"metadata,omitempty"`
-	MediaType            MediaType      `json:"type"`
-	DataState            MediaDataState `json:"data_state"`
-	EmbededData          []byte         `json:"embeded_data,omitempty"`
-	DataDownloadURL      *string        `json:"data_download_url,omitempty"`
-	DataUploadURL        *string        `json:"data_upload_url,omitempty"`
-	RepresentedSpaceMUID *string        `json:"represented_space_muid,omitempty"`
+	// Unique identifier
+	MUID *string `json:"muid,omitempty"`
+	// Creation timestamp
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	// Last update timestamp
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	// Visibility state
+	State EntityState `json:"state"`
+	// JSON encodec dictionary of media metadata eg. size, encoding, etc.
+	Metadata *string `json:"metadata,omitempty"`
+	// Semantic type of media (reference, source, thumbnail, summary, etc.)
+	MediaType MediaType `json:"type"`
+	// Owner user ID
+	OwnerID *int64 `json:"owner_id,omitempty"`
+	// If media represents any space then its MUID is present
+	RepresentedSpaceMUID *string `json:"represented_space_muid,omitempty"`
+	// Validity of media data
+	DataState MediaDataState `json:"data_state"`
+	// Embed media binary data (only if small enough, otherwise use dataDownloadURL and dataUploadURL)
+	EmbededData []byte `json:"embeded_data,omitempty"`
+	// Download url for data (exclusive with embedData)
+	DataDownloadURL *string `json:"data_download_url,omitempty"`
+	// Upload link for new data. After data is uploaded it is needed to call mark media as uploaded function.
+	DataUploadURL *string `json:"data_upload_url,omitempty"`
 }
 
 type mediaRequest struct {
