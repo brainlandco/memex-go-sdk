@@ -10,13 +10,13 @@ import (
 type MediaType string
 
 const (
-	// Source media type is basic data source of media
+	// Source of data (every other representation can be derived from it).
 	Source MediaType = "source"
-	// Reference media contains indirect pointer to media data (eg URL)
+	// Reference is link to source
 	Reference MediaType = "reference"
-	// Preview represents more abstract visual representation of space
+	// Preview is visual/graphical abstraction of source/reference
 	Preview MediaType = "preview"
-	// Summary represents more abstract textual representation of space
+	// Summary is textual abstraction of source/reference
 	Summary MediaType = "summary"
 )
 
@@ -44,7 +44,7 @@ type Media struct {
 	State EntityState `json:"state"`
 	// JSON encodec dictionary of media metadata eg. size, encoding, etc.
 	Metadata *string `json:"metadata,omitempty"`
-	// Semantic type of media (reference, source, thumbnail, summary, etc.)
+	// Type of media
 	MediaType MediaType `json:"type"`
 	// Owner user ID
 	OwnerID *int64 `json:"owner_id,omitempty"`

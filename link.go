@@ -15,8 +15,6 @@ type Link struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// Timestamp of last update
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	// Timestamp of last visit
-	VisitedAt *time.Time `json:"visited_at,omitempty"`
 	// Visibility state
 	State EntityState `json:"state"`
 	// Owner user ID

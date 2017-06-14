@@ -6,34 +6,46 @@ import (
 	"time"
 )
 
-// SpaceType represents semantic type of space
+// SpaceType represents type of space
 type SpaceType string
 
 const (
 	// Origin represents starting point space for user
 	Origin SpaceType = "com.memex.origin"
-	// Text space represents textual data
-	Text SpaceType = "com.memex.media.text"
+	// Collection is set/list of links to other spaces
+	Collection SpaceType = "com.memex.media.collection"
 	// WebPage space represents web link URL
 	WebPage SpaceType = "com.memex.media.webpage"
 	// Image space represents image/diagram space
 	Image SpaceType = "com.memex.media.image"
-	// Collection is set/list of links to other spaces
-	Collection SpaceType = "com.memex.media.collection"
+	// Text space represents textual data
+	Text SpaceType = "com.memex.media.text"
 )
 
 // Space represents folder/text/everything
 type Space struct {
-	MUID            *string     `json:"muid,omitempty"`
-	CreatedAt       *time.Time  `json:"created_at,omitempty"`
-	UpdatedAt       *time.Time  `json:"updated_at,omitempty"`
-	VisitedAt       *time.Time  `json:"visited_at,omitempty"`
-	State           EntityState `json:"state"`
-	OwnerID         *int64      `json:"owner_id,omitempty"`
-	Caption         *string     `json:"tag_label,omitempty"`
-	Color           *string     `json:"tag_color,omitempty"`
-	TypeIdentifier  SpaceType   `json:"type_identifier"`
-	Representations *[]Media    `json:"representations,omitempty"`
+	// Unique identifier
+	MUID *string `json:"muid,omitempty"`
+	// Creation timestamp
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	// Timestamp of last update
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	// Timestamp of last visit
+	VisitedAt *time.Time `json:"visited_at,omitempty"`
+	// Visibility state
+	State EntityState `json:"state"`
+	// Owner user ID
+	OwnerID *int64 `json:"owner_id,omitempty"`
+	// Type (eg. com.memex.media.collection, etc.)
+	SpaceType SpaceType `json:"type_identifier"`
+	// Caption
+	Caption *string `json:"tag_label,omitempty"`
+	// Tint color
+	Color *string `json:"tag_color,omitempty"`
+	// Set of media that represents space (eg webpage space is represented by url, thumbnail, summary)
+	Representations *[]Media `json:"representations,omitempty"`
+	// Unread flag (if user needs to be notified about changes)
+	Unread *bool `json:"unread,omitempty"`
 }
 
 type spaceResponse struct {
