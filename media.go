@@ -41,23 +41,23 @@ type Media struct {
 	// Last update timestamp
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	// Visibility state
-	State EntityState `json:"state"`
+	State *EntityState `json:"state,omitempty"`
+	// Owner user ID
+	OwnerID *int64 `json:"owner_id,omitempty"`
 	// JSON encodec dictionary of media metadata eg. size, encoding, etc.
 	Metadata *string `json:"metadata,omitempty"`
 	// Type of media
-	MediaType MediaType `json:"type"`
-	// Owner user ID
-	OwnerID *int64 `json:"owner_id,omitempty"`
-	// If media represents any space then its MUID is present
-	RepresentedSpaceMUID *string `json:"represented_space_muid,omitempty"`
+	MediaType *MediaType `json:"type,omitempty"`
 	// Validity of media data
-	DataState MediaDataState `json:"data_state"`
+	DataState *MediaDataState `json:"data_state,omitempty"`
 	// Embed media binary data (only if small enough, otherwise use dataDownloadURL and dataUploadURL)
 	EmbededData []byte `json:"embeded_data,omitempty"`
 	// Download url for data (exclusive with embedData)
 	DataDownloadURL *string `json:"data_download_url,omitempty"`
 	// Upload link for new data. After data is uploaded it is needed to call mark media as uploaded function.
 	DataUploadURL *string `json:"data_upload_url,omitempty"`
+	// If media represents any space then its MUID is present
+	RepresentedSpaceMUID *string `json:"represented_space_muid,omitempty"`
 }
 
 type mediaRequest struct {

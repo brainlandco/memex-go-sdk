@@ -16,7 +16,7 @@ type Link struct {
 	// Timestamp of last update
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	// Visibility state
-	State EntityState `json:"state"`
+	State *EntityState `json:"state,omitempty"`
 	// Owner user ID
 	OwnerID *int64 `json:"owner_id,omitempty"`
 	// Index that is used for sorting of links in space

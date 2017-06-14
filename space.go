@@ -33,11 +33,11 @@ type Space struct {
 	// Timestamp of last visit
 	VisitedAt *time.Time `json:"visited_at,omitempty"`
 	// Visibility state
-	State EntityState `json:"state"`
+	State *EntityState `json:"state,omitempty"`
 	// Owner user ID
 	OwnerID *int64 `json:"owner_id,omitempty"`
 	// Type (eg. com.memex.media.collection, etc.)
-	SpaceType SpaceType `json:"type_identifier"`
+	SpaceType *SpaceType `json:"type_identifier,omitempty"`
 	// Caption
 	Caption *string `json:"tag_label,omitempty"`
 	// Tint color
@@ -66,7 +66,7 @@ func (space *Space) RepresentationWithType(mediaType MediaType) *Media {
 		return nil
 	}
 	for _, media := range *space.Representations {
-		if media.MediaType == mediaType {
+		if media.MediaType != nil && *media.MediaType == mediaType {
 			return &media
 		}
 	}
