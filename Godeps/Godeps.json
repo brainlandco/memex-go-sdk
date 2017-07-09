@@ -1,0 +1,16 @@
+{
+	"ImportPath": "github.com/memexapp/memex-go-sdk",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "v1.0.0-10-g3d84af1",
+			"Rev": "3d84af1ae04512e1bd4fe2b23fc6975db255f79c"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "1e99a4f9d247b28c670884b9a8d6801f39a47b77"
+		}
+	]
+}
