@@ -36,6 +36,12 @@ type linksRequest struct {
 	RemoveToken *string `json:"remove_token,omitempty"`
 }
 
+// ISpacesLinks is abstraction of all links related operations
+type ISpacesLinks interface {
+	GetSpaceLinks(muid string) (*[]Link, error)
+	UpdateLinks(array []*Link, removeToken *string) error
+}
+
 // GetSpaceLinks returns links from space
 func (spaces *Spaces) GetSpaceLinks(muid string) (*[]Link, error) {
 	path := fmt.Sprintf("/spaces/%v/links", muid)

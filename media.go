@@ -67,6 +67,11 @@ type mediaRequest struct {
 type emptyResponse struct {
 }
 
+// ISpacesMedia is abstraction of all media related operations
+type ISpacesMedia interface {
+	UpdateMedia(array []*Media) error
+}
+
 // UpdateMedia updates multiple media
 func (spaces *Spaces) UpdateMedia(array []*Media) error {
 	message := &mediaRequest{

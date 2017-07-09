@@ -19,6 +19,13 @@ type Spaces struct {
 	httpClient *http.Client
 }
 
+// ISpaces is composite abstraction (interface) of all operations
+type ISpaces interface {
+	ISpacesSpaces
+	ISpacesMedia
+	ISpacesLinks
+}
+
 // NewSpaces creates new spaces object
 func NewSpaces() (*Spaces, error) {
 	spaces := &Spaces{

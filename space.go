@@ -60,6 +60,14 @@ type markAsUnreadRequest struct {
 	MUIDs []*string `json:"space_MUIDs"`
 }
 
+// ISpacesSpaces is abstraction of all spaces related operations
+type ISpacesSpaces interface {
+	GetSpace(muid string) (*Space, error)
+	UpdateSpaces(array []*Space, ownerID int64) error
+	UpdateSpace(space *Space) error
+	MarkSpacesAsUnread(muids []*string) error
+}
+
 // RepresentationWithType returns representation with specified media type
 func (space *Space) RepresentationWithType(mediaType MediaType) *Media {
 	if space.Representations == nil {
