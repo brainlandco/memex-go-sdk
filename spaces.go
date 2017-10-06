@@ -49,8 +49,12 @@ func (spaces *Spaces) SetUserToken(token string) {
 }
 
 // SetEnvironment sets environment of service Production/Stage/Sandbox/Local
-func (spaces *Spaces) SetEnvironment(environment Environment) {
-	spaces.serverURL = serverURL(environment)
+func (spaces *Spaces) SetEnvironment(environment Environment, url *string) {
+	if url != nil {
+		spaces.serverURL = *url
+	} else {
+		spaces.serverURL = serverURL(environment)
+	}
 }
 
 func serverURL(environment Environment) string {
